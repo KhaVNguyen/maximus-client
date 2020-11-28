@@ -1,14 +1,18 @@
 import { FunctionComponent, useState } from "react"
+// import { useSelector, useDispatch } from "react-redux"
 import styled from "styled-components"
 import Layout from "styles/Layout"
 import { Subtitle, Title, Button } from "styles/Components"
 import TextInput from "components/TextInput"
 import JoinLobby from "components/JoinLobby"
+// import { getName, setName } from "store/entities/settings"
 
 const Home: FunctionComponent = () => {
   type State = "default" | "enter-lobby-code"
   const [currentState, setCurrentState] = useState<State>("default")
-  const [name, setName] = useState("")
+
+  // const dispatch = useDispatch()
+  // const name = useSelector(getName)
 
   return (
     <Layout>
@@ -23,8 +27,12 @@ const Home: FunctionComponent = () => {
           label="Name"
           type="text"
           placeholder="Enter display name here"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={"dkfljs"}
+          onChange={(e) => {
+            console.log(e.target.value)
+          }}
+          // value={name}
+          // onChange={(e) => dispatch(setName(e.target.value))}
         />
         <ButtonContainer>
           <Button style="primary">Create New Lobby</Button>

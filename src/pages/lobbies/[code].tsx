@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react"
-import { useRouter } from "next/router"
+import Router, { useRouter } from "next/router"
 import styled from "styled-components"
 import Layout from "styles/Layout"
 import { Subtitle, PageTitle, Button } from "styles/Components"
@@ -17,8 +17,15 @@ const Lobby: FunctionComponent = () => {
           <Subtitle>Players In Lobby: 5</Subtitle>
         </TextContainer>
         <ButtonContainer>
-          <Button style="primary">Create New Lobby</Button>
-          <Button style="primary">Join Existing Lobby</Button>
+          <Button
+            style="secondary"
+            onClick={() => {
+              router.push("/")
+            }}
+          >
+            Leave Lobby
+          </Button>
+          {/* <Button style="primary">Join Existing Lobby</Button> */}
         </ButtonContainer>
       </Container>
     </Layout>

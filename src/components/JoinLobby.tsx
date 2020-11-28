@@ -2,6 +2,7 @@ import { FunctionComponent, useState } from "react"
 import styled from "styled-components"
 import TextInput from "components/TextInput"
 import { TextButton } from "styles/Components"
+import Router from "next/router"
 
 const JoinLobby: FunctionComponent = () => {
   const [lobbyCode, setLobbyCode] = useState("")
@@ -17,7 +18,13 @@ const JoinLobby: FunctionComponent = () => {
           setLobbyCode(ev.target.value)
         }
       />
-      <ConfirmButton state={lobbyCode.length == 6 ? "enabled" : "disabled"}>
+      <ConfirmButton
+        state={lobbyCode.length == 6 ? "enabled" : "disabled"}
+        onClick={(e) => {
+          e.preventDefault()
+          Router.push(`lobbies/${lobbyCode}`)
+        }}
+      >
         Confirm
       </ConfirmButton>
     </Container>
