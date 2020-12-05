@@ -1,13 +1,8 @@
-# NextJS Boilerplate
-
-Includes Eslint (with pre commit linting), Prettier, Styled Components
+# Maximus Client
 
 ## Instructions
 
 ```
-Click **Use this template** above.
-
-
 cd <directory of the project>
 yarn
 yarn dev
