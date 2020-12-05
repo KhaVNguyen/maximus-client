@@ -23,6 +23,11 @@ export const Label = styled.label`
   margin-bottom: 8px;
 `
 
+export const Body = styled.p`
+  font-size: 14px;
+  font-weight: bold;
+`
+
 /* Variants with spacing */
 export const PageTitle = styled(Title)`
   margin-bottom: 12px;
@@ -32,11 +37,12 @@ export const PageTitle = styled(Title)`
   Interactive
 */
 
-type ButtonStyle = "primary" | "secondary"
+type ButtonVariant = "primary" | "secondary"
 type ButtonState = "enabled" | "disabled"
+type ActionButtonVariant = "attack" | "shield" | "charge"
 
-const handleButtonBackground = (style: ButtonStyle) => {
-  switch (style) {
+const handleButtonBackground = (variant: ButtonVariant) => {
+  switch (variant) {
     case "primary":
       return "#111111"
     case "secondary":
@@ -44,8 +50,8 @@ const handleButtonBackground = (style: ButtonStyle) => {
   }
 }
 
-const handleButtonTextColor = (style: ButtonStyle) => {
-  switch (style) {
+const handleButtonTextColor = (variant: ButtonVariant) => {
+  switch (variant) {
     case "primary":
       return "#ffffff"
     case "secondary":
@@ -54,10 +60,10 @@ const handleButtonTextColor = (style: ButtonStyle) => {
 }
 
 export const Button = styled.button<{
-  style: ButtonStyle
+  variant: ButtonVariant
 }>`
-  background-color: ${({ style }) => handleButtonBackground(style)};
-  color: ${({ style }) => handleButtonTextColor(style)};
+  background-color: ${({ variant }) => handleButtonBackground(variant)};
+  color: ${({ variant }) => handleButtonTextColor(variant)};
   font-size: 14px;
   font-weight: bold;
   border-radius: 4px;
@@ -65,8 +71,10 @@ export const Button = styled.button<{
   width: 100%;
   &:hover,
   &:active {
-    background-color: ${({ style }) =>
-      style === "primary" ? "rgba(0, 0, 0, 0.75)" : "default"};
+    background-color: ${({ variant }) =>
+      variant === "primary" ? "rgba(0, 0, 0, 0.75)" : "default"};
+    filter: ${({ variant }) =>
+      variant === "primary" ? "none" : "brightness(90%)"};
   }
 `
 
@@ -96,6 +104,33 @@ export const TextButton = styled.button<{
   }
 `
 
+const handleActionButtonColor = (state: ActionButtonVariant) => {
+  switch (state) {
+    case "attack":
+      return "#D54645"
+    case "shield":
+      return "#324E68"
+    case "charge":
+      return "#333333"
+  }
+}
+
+export const ActionButton = styled.button<{
+  variant: ActionButtonVariant
+}>`
+  color: white;
+  background: ${({ variant }) => handleActionButtonColor(variant)};
+  width: 92px;
+  padding: 12px 16px;
+  align-self: flex-end;
+  font-weight: 600;
+  cursor: pointer;
+  &:hover,
+  &:active {
+    filter: brightness(125%);
+  }
+`
+
 export const TextInputField = styled.input`
   border: 2px solid black;
   height: 48px;
@@ -108,3 +143,43 @@ export const TextInputField = styled.input`
     border: 2px solid rgba(0, 0, 0, 0.5);
   }
 `
+
+/* 
+  Animations
+*/
+
+export const ContainerAnimation = {
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.3,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.75,
+  },
+}
+
+export const FadeIn = {
+  hidden: {
+    opacity: 0,
+    scale: 0.6,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 0.24,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.6,
+  },
+}

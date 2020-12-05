@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { motion } from "framer-motion"
 import { Label, TextInputField } from "styles/Components"
 
 interface TextInputProps {
@@ -11,14 +12,14 @@ interface TextInputProps {
 
 const TextInput: React.FC<TextInputProps> = (props) => {
   return (
-    <Container>
+    <Container layout>
       <Label>{props.label}</Label>
       <TextInputField {...props} />
     </Container>
   )
 }
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   display: flex;
   flex-direction: column;
 `

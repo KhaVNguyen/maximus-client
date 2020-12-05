@@ -1,14 +1,21 @@
 import { FunctionComponent, useState } from "react"
 import styled from "styled-components"
+import { motion } from "framer-motion"
 import TextInput from "components/TextInput"
 import { TextButton } from "styles/Components"
-import Router from "next/router"
+import { useRouter } from "next/router"
+
+const ContainerAnimation = {
+  hidden: { opacity: 0, y: -32 },
+  visible: { opacity: 1, y: 0 },
+}
 
 const JoinLobby: FunctionComponent = () => {
+  const router = useRouter()
   const [lobbyCode, setLobbyCode] = useState("")
 
   return (
-    <Container>
+    <Container variants={ContainerAnimation} initial="hidden" animate="visible">
       <TextInput
         label="Lobby Code"
         type="text"
@@ -22,7 +29,7 @@ const JoinLobby: FunctionComponent = () => {
         state={lobbyCode.length == 6 ? "enabled" : "disabled"}
         onClick={(e) => {
           e.preventDefault()
-          Router.push(`lobbies/${lobbyCode}`)
+          router.push(`lobbies/${lobbyCode}`)
         }}
       >
         Confirm
@@ -31,7 +38,7 @@ const JoinLobby: FunctionComponent = () => {
   )
 }
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   display: flex;
   flex-direction: column;
 `

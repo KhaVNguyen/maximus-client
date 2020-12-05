@@ -1,0 +1,79 @@
+/// Mixin to place items on a circle
+/// @author Hugo Giraudel
+/// @author Ana Tudor
+/// @param {Integer} $item-count - Number of items on the circle
+/// @param {Length} $circle-size - Large circle size
+/// @param {Length} $item-size - Single item size
+@mixin on-circle($item-count) {
+  $circle-size: min(calc(100vw - 100px), 450px);
+  $half-circle-size: min(calc((100vw - 100px) / 2), 225px);
+  position: relative;
+  border: solid 8px darkgray;
+  width: $circle-size;
+  height: $circle-size;
+  padding: 0;
+  border-radius: 50%;
+  list-style: none;
+
+  > * {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 72px;
+    height: 64px;
+    margin: -(72px / 2);
+    @media (min-width: 768px) {
+      width: 110px;
+      height: 72px;
+      margin: -55px;
+    }
+
+    $angle: (360 / $item-count);
+    $rot: 0;
+    @for $i from 1 through $item-count {
+      &:nth-of-type(#{$i}) {
+        transform: rotate($rot * 1deg)
+          translate($half-circle-size)
+          rotate($rot * -1deg);
+      }
+
+      $rot: $rot + $angle;
+    }
+  }
+}
+
+.ring {
+  margin: 48px auto;
+}
+
+.ring-1 {
+  @include on-circle($item-count: 1);
+}
+
+.ring-2 {
+  @include on-circle($item-count: 2);
+}
+
+.ring-3 {
+  @include on-circle($item-count: 3);
+}
+
+.ring-4 {
+  @include on-circle($item-count: 4);
+}
+
+.ring-5 {
+  @include on-circle($item-count: 5);
+}
+
+.ring-6 {
+  @include on-circle($item-count: 6);
+}
+.ring-7 {
+  @include on-circle($item-count: 7);
+}
+
+.ring-8 {
+  @include on-circle($item-count: 8);
+}

@@ -1,51 +1,77 @@
-import { FunctionComponent } from "react"
-import Router, { useRouter } from "next/router"
+import { useEffect, FunctionComponent } from "react"
 import styled from "styled-components"
+import { useDispatch, useSelector } from "react-redux"
+import { useRouter } from "next/router"
+import { motion, AnimateSharedLayout } from "framer-motion"
 import Layout from "styles/Layout"
-import { Subtitle, PageTitle, Button } from "styles/Components"
+import {
+  Subtitle,
+  PageTitle,
+  Button,
+  ContainerAnimation,
+} from "styles/Components"
+import { getNumberOfPlayers, setLobbyState } from "store/entities/lobby"
+import PlayersContainer from "components/PlayersContainer"
 
 const Lobby: FunctionComponent = () => {
+  const dispatch = useDispatch()
   const router = useRouter()
   const code = router.query.code
-  console.log(router)
+
+  const numberOfPlayers = useSelector(getNumberOfPlayers)
 
   return (
     <Layout>
-      <Container>
-        <TextContainer>
-          <PageTitle>Lobby: {code}</PageTitle>
-          <Subtitle>Players In Lobby: 5</Subtitle>
-        </TextContainer>
-        <ButtonContainer>
-          <Button
-            style="secondary"
-            onClick={() => {
-              router.push("/")
-            }}
-          >
-            Leave Lobby
-          </Button>
-          {/* <Button style="primary">Join Existing Lobby</Button> */}
-        </ButtonContainer>
-      </Container>
+      <AnimateSharedLayout>
+        <Container
+          layout
+          variants={ContainerAnimation}
+          initial="hidden"
+          animate="visible"
+        >
+          <TextContainer layout>
+            <PageTitle>Lobby: {code}</PageTitle>
+            <Subtitle>Players In Lobby: {numberOfPlayers}</Subtitle>
+          </TextContainer>
+          <PlayersContainer />
+          <ButtonContainer layout>
+            <Button
+              variant="primary"
+              onClick={() => {
+                router.push(`/games/${code}`)
+              }}
+            >
+              Start Game
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => {
+                router.push("/")
+              }}
+            >
+              Leave Lobby
+            </Button>
+          </ButtonContainer>
+        </Container>
+      </AnimateSharedLayout>
     </Layout>
   )
 }
 
-const Container = styled.div`
+const Container = styled(motion.div)`
   padding: 48px 32px;
   display: grid;
   grid-row-gap: 32px;
-  max-width: 992px;
+  max-width: 500px;
   margin: auto;
 `
 
-const TextContainer = styled.div`
+const TextContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
 `
 
-const ButtonContainer = styled.div`
+const ButtonContainer = styled(motion.div)`
   display: grid;
   grid-template-columns: 1fr;
   grid-gap: 12px;
