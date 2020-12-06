@@ -54,7 +54,7 @@ const Container = styled(motion.div)`
   padding: 48px 32px;
   display: grid;
   grid-row-gap: 32px;
-  max-width: 500px;
+  max-width: 625px;
   margin: auto;
 `
 
@@ -77,14 +77,14 @@ const RightContainer = styled.div`
 
 const ExitButton = styled.button`
   cursor: pointer;
-  background: rgba(0, 0, 0, 0.05);
+  background: rgba(255, 255, 255, 0.05);
   padding: 8px 24px;
   margin-top: 12px;
   border-radius: 4px;
-  color: rgba(0, 0, 0, 0.4);
+  color: #b4b5b4;
   transition: all 0.12s ease-out;
   &:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.1);
   }
 `
 
@@ -97,17 +97,17 @@ const Label = styled.p`
 `
 
 const ShieldLabel = styled(Label)`
-  color: #314e68;
+  color: #6f9cc1;
   margin-right: 4px;
 `
 
 const Divider = styled.p`
-  color: #595959;
+  color: rgba(255, 255, 255, 0.8);
   font-weight: bold;
 `
 
 const HealthLabel = styled(Label)`
-  color: #e94d4c;
+  color: #f46a69;
   margin-left: 4px;
 `
 

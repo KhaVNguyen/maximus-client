@@ -1,4 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit"
+import { ClientPayload, WebSocketContextProps } from "api/websocket"
 import { RootState } from "store/reducer"
 
 export type Move = "attack" | "shield" | "charge"
@@ -8,118 +9,37 @@ export interface Turn {
   target?: string
 }
 
+export interface Result {
+  healthDamageTaken: number
+  shieldDamageTaken: number
+  damageDealt: number
+}
+
 interface PlayerState {
   name: string
   health: number
   shield: number
   isCharged: boolean
   turn: Turn
+  results: Result
 }
 
-interface LobbySliceState {
-  code: string
+export interface LobbySliceState {
+  _id: string
   players: PlayerState[]
 }
 
 const initialState: LobbySliceState = {
-  code: "",
+  _id: "",
   players: [],
-}
-
-// Testing only, delete after
-const DUMMY_LOBBY_STATE: LobbySliceState = {
-  code: "DFSDFS",
-  players: [
-    {
-      name: "JoeMama",
-      health: 100,
-      shield: 100,
-      isCharged: false,
-      turn: {
-        // move: "attack",
-        // target: "Res",
-      },
-    },
-    {
-      name: "Res",
-      health: 30,
-      shield: 10,
-      isCharged: true,
-      turn: {
-        // move: "shield",
-        // target: "Res",
-      },
-    },
-    {
-      name: "Joe",
-      health: 5,
-      shield: 0,
-      isCharged: false,
-      turn: {
-        // move: "charge",
-        // target: "Res",
-      },
-    },
-    {
-      name: "Margo",
-      health: 32,
-      shield: 5,
-      isCharged: false,
-      turn: {
-        // move: "charge",
-        // target: "Margo",
-      },
-    },
-    {
-      name: "Compilation",
-      health: 32,
-      shield: 5,
-      isCharged: false,
-      turn: {
-        // move: "attack",
-        // target: "Joe",
-      },
-    },
-    {
-      name: "RedRum",
-      health: 32,
-      shield: 5,
-      isCharged: false,
-      turn: {
-        // move: "shield",
-        // target: "Res",
-      },
-    },
-    {
-      name: "Market",
-      health: 32,
-      shield: 5,
-      isCharged: false,
-      turn: {
-        // move: "attack",
-        // target: "Res",
-      },
-    },
-    {
-      name: "X",
-      health: 32,
-      shield: 5,
-      isCharged: false,
-      turn: {
-        // move: "attack",
-        // target: "Margo",
-      },
-    },
-  ],
 }
 
 const lobbySlice = createSlice({
   name: "lobby",
-  // initialState,
-  initialState: DUMMY_LOBBY_STATE,
+  initialState,
   reducers: {
     setLobbyState: (lobby, action: PayloadAction<LobbySliceState>) => {
-      lobby.code = action.payload.code
+      lobby._id = action.payload._id
       lobby.players = action.payload.players
     },
     removePlayer: (lobby, action: PayloadAction<string>) => {
@@ -135,23 +55,36 @@ const lobbySlice = createSlice({
         (player) => player.name == action.payload.player
       )
       if (currentPlayer) {
+        currentPlayer.turn = {}
         currentPlayer.turn.move = action.payload.move
       }
     },
     selectTarget: (
       lobby,
-      action: PayloadAction<{ player: string; target: string }>
+      action: PayloadAction<{
+        player: string
+        target: string
+        ws: WebSocketContextProps | null
+      }>
     ) => {
-      const currentPlayer = lobby.players.find(
-        (player) => player.name == action.payload.player
-      )
+      const { player, target, ws } = action.payload
+      const currentPlayer = lobby.players.find((p) => p.name == player)
       if (currentPlayer) {
-        currentPlayer.turn.target = action.payload.target
+        currentPlayer.turn.target = target
+        try {
+          const payload: ClientPayload = {
+            lobbyCode: lobby._id,
+            user: currentPlayer.name,
+            move: currentPlayer.turn.move,
+            target: currentPlayer.turn.target,
+          }
+          console.log("We're gonna send to the server this payload: ", payload)
+          ws?.sendTurn(payload)
+        } catch (error) {
+          console.error(error)
+        }
       }
     },
-    // doTurn: (lobby, action: PayloadAction<Turn>) => {
-
-    // }
   },
 })
 
@@ -160,6 +93,12 @@ export const getPlayerList = (state: RootState): PlayerState[] =>
 
 export const getNumberOfPlayers = (state: RootState): number =>
   state.entities.lobby.players.length
+
+export const getIsHost = (state: RootState): boolean =>
+  state.entities.settings.name == state.entities.lobby.players[0]?.name
+
+export const getCanStartGame = (state: RootState): boolean =>
+  state.entities.lobby.players.length >= 2
 
 export const {
   setLobbyState,

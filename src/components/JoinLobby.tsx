@@ -4,6 +4,11 @@ import { motion } from "framer-motion"
 import TextInput from "components/TextInput"
 import { TextButton } from "styles/Components"
 import { useRouter } from "next/router"
+import { useDispatch, useSelector } from "react-redux"
+import { setLobbyState } from "store/entities/lobby"
+import { getName } from "store/entities/settings"
+import { joinLobby } from "api/lobby"
+import { showAlert } from "helpers"
 
 const ContainerAnimation = {
   hidden: { opacity: 0, y: -32 },
@@ -12,7 +17,20 @@ const ContainerAnimation = {
 
 const JoinLobby: FunctionComponent = () => {
   const router = useRouter()
+  const dispatch = useDispatch()
+  const name = useSelector(getName)
   const [lobbyCode, setLobbyCode] = useState("")
+
+  async function handleJoinLobby() {
+    const { success, error, lobbyState } = await joinLobby(lobbyCode, name)
+    if (success && lobbyState) {
+      dispatch(setLobbyState(lobbyState))
+      router.push(`/lobbies/${lobbyState._id}`)
+    } else {
+      const shownError = error ?? ""
+      showAlert("danger", "Error", "Error joining lobby: " + shownError)
+    }
+  }
 
   return (
     <Container variants={ContainerAnimation} initial="hidden" animate="visible">
@@ -27,10 +45,7 @@ const JoinLobby: FunctionComponent = () => {
       />
       <ConfirmButton
         state={lobbyCode.length == 6 ? "enabled" : "disabled"}
-        onClick={(e) => {
-          e.preventDefault()
-          router.push(`lobbies/${lobbyCode}`)
-        }}
+        onClick={handleJoinLobby}
       >
         Confirm
       </ConfirmButton>

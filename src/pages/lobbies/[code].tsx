@@ -10,7 +10,11 @@ import {
   Button,
   ContainerAnimation,
 } from "styles/Components"
-import { getNumberOfPlayers, setLobbyState } from "store/entities/lobby"
+import {
+  getNumberOfPlayers,
+  getIsHost,
+  getCanStartGame,
+} from "store/entities/lobby"
 import PlayersContainer from "components/PlayersContainer"
 
 const Lobby: FunctionComponent = () => {
@@ -19,6 +23,8 @@ const Lobby: FunctionComponent = () => {
   const code = router.query.code
 
   const numberOfPlayers = useSelector(getNumberOfPlayers)
+  const isHost = useSelector(getIsHost)
+  const canStartGame = useSelector(getCanStartGame)
 
   return (
     <Layout>
@@ -35,14 +41,16 @@ const Lobby: FunctionComponent = () => {
           </TextContainer>
           <PlayersContainer />
           <ButtonContainer layout>
-            <Button
-              variant="primary"
-              onClick={() => {
-                router.push(`/games/${code}`)
-              }}
-            >
-              Start Game
-            </Button>
+            {isHost && canStartGame && (
+              <Button
+                variant="primary"
+                onClick={() => {
+                  router.push(`/games/${code}`)
+                }}
+              >
+                Start Game
+              </Button>
+            )}
             <Button
               variant="secondary"
               onClick={() => {

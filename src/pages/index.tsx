@@ -2,11 +2,17 @@ import { FunctionComponent, useState } from "react"
 import styled from "styled-components"
 import { AnimateSharedLayout, motion } from "framer-motion"
 import { useSelector, useDispatch } from "react-redux"
+import { useRouter } from "next/router"
 import Layout from "styles/Layout"
 import { Subtitle, Title, Button, ContainerAnimation } from "styles/Components"
 import TextInput from "components/TextInput"
 import JoinLobby from "components/JoinLobby"
 import { getName, setName } from "store/entities/settings"
+import { setLobbyState } from "store/entities/lobby"
+import { createNewLobby } from "api/lobby"
+import ReactNotification, { store } from "react-notifications-component"
+import "react-notifications-component/dist/theme.css"
+import { showAlert } from "helpers"
 
 const Home: FunctionComponent = () => {
   type State = "default" | "enter-lobby-code"
@@ -15,8 +21,24 @@ const Home: FunctionComponent = () => {
   const dispatch = useDispatch()
   const name = useSelector(getName)
 
+  const router = useRouter()
+
+  async function handleCreateNewLobby() {
+    const { success, lobbyState, error } = await createNewLobby(name)
+    if (success && lobbyState) {
+      dispatch(setLobbyState(lobbyState))
+      router.push(`/lobbies/${lobbyState._id}`)
+    } else {
+      const errorShown = error ?? "Error creating lobby"
+      if (error) {
+        showAlert("error", "Error", errorShown)
+      }
+    }
+  }
+
   return (
     <AnimateSharedLayout>
+      <ReactNotification />
       <Layout>
         <Container
           layout
@@ -38,7 +60,9 @@ const Home: FunctionComponent = () => {
             onChange={(e) => dispatch(setName(e.target.value))}
           />
           <ButtonContainer layout>
-            <Button variant="primary">Create New Lobby</Button>
+            <Button variant="primary" onClick={handleCreateNewLobby}>
+              Create New Lobby
+            </Button>
             <Button
               variant="primary"
               onClick={() => {

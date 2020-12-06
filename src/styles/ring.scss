@@ -8,7 +8,7 @@
   $circle-size: min(calc(100vw - 100px), 450px);
   $half-circle-size: min(calc((100vw - 100px) / 2), 225px);
   position: relative;
-  border: solid 8px darkgray;
+  border: solid 8px #621b1b;
   width: $circle-size;
   height: $circle-size;
   padding: 0;

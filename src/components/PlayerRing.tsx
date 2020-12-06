@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useState, useContext } from "react"
 import styled from "styled-components"
 import { useDispatch, useSelector } from "react-redux"
 import { AnimatePresence, motion } from "framer-motion"
@@ -13,10 +13,12 @@ import {
   selectTarget,
 } from "store/entities/lobby"
 import { getName } from "store/entities/settings"
+import WebSocketContext from "api/websocket"
 
 type CurrentStatus =
   | "choosing-move"
   | "choosing-target"
+  | "waiting-for-others"
   | "viewing-result"
   | "spectating"
 
@@ -25,6 +27,8 @@ const PlayerRing: FunctionComponent = () => {
   const playerName = useSelector(getName)
   const playerList = useSelector(getPlayerList)
   const numberOfPlayers = useSelector(getNumberOfPlayers)
+
+  const ws = useContext(WebSocketContext)
 
   const [currentStatus, setCurrentStatus] = useState<CurrentStatus>(
     "choosing-move"
@@ -59,8 +63,8 @@ const PlayerRing: FunctionComponent = () => {
   }
 
   function onSelectTarget(target: string) {
-    dispatch(selectTarget({ player: playerName, target }))
-    setCurrentStatus("viewing-result")
+    dispatch(selectTarget({ player: playerName, target, ws }))
+    setCurrentStatus("waiting-for-others")
   }
 
   function getTargetDisplayText() {
@@ -98,7 +102,7 @@ const PlayerRing: FunctionComponent = () => {
               <Divider>|</Divider>
               <Health>{player.shield}</Health>
             </PlayerStats>
-            {player.turn.move && (
+            {player?.turn?.move && (
               <PlayerMove color={getMoveDisplayColor(player.turn.move)}>
                 {getMoveDisplayText(player.turn)}
               </PlayerMove>
@@ -156,6 +160,18 @@ const PlayerRing: FunctionComponent = () => {
         )}
       </AnimatePresence>
       <AnimatePresence>
+        {currentStatus == "waiting-for-others" && (
+          <PromptContainer
+            variants={FadeIn}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <Prompt>Waiting...</Prompt>
+          </PromptContainer>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
         {currentStatus == "viewing-result" && (
           <PromptContainer
             variants={FadeIn}
@@ -177,9 +193,9 @@ const Container = styled.div`
 const Ring = styled.ul``
 
 const Player = styled(motion.li)<{ selectable: boolean }>`
-  background: white;
-  border-radius: 8px;
-  cursor: ${(props) => (props.selectable ? "pointer" : "none")};
+  background: #494a4b;
+  border-radius: 6px;
+  cursor: ${(props) => (props.selectable ? "pointer" : "default")};
   transition: all 0.12s ease-out;
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -187,7 +203,7 @@ const Player = styled(motion.li)<{ selectable: boolean }>`
   justify-content: center;
   align-items: center;
   &:hover {
-    filter: brightness(125%);
+    filter: ${(props) => (props.selectable ? "brightness(125%)" : "none")};
   }
 `
 
@@ -200,7 +216,7 @@ const TextStat = styled.p`
 `
 
 const PlayerName = styled(TextStat)`
-  color: #4d4d4d;
+  color: white;
   margin-bottom: 4px;
 `
 
@@ -209,16 +225,16 @@ const PlayerStats = styled.div`
 `
 
 const Shield = styled(TextStat)`
-  color: #324e68;
+  color: #6f9cc1;
   margin-right: 4px;
 `
 
 const Divider = styled(TextStat)`
-  color: #595959;
+  color: rgba(255, 255, 255, 0.8);
 `
 
 const Health = styled(TextStat)`
-  color: #d54645;
+  color: #f46a69;
   margin-left: 4px;
 `
 
@@ -250,7 +266,7 @@ const Actions = styled(motion.div)`
 `
 
 const ActionsRow = styled.div`
-  border-radius: 8px;
+  border-radius: 6px;
   overflow: hidden;
   display: flex;
   flex-direction: column;

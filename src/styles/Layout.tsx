@@ -7,6 +7,8 @@ export const GlobalStyle = createGlobalStyle`
     height: 100vh;
     display: flex;
     flex-direction: column;
+    background: #1C1D1E;
+    color: white;
     @media (min-width: 768px) {
       justify-content: center;
     }

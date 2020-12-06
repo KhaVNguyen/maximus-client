@@ -14,7 +14,7 @@ export const Title = styled.h1`
 export const Subtitle = styled.h2`
   font-size: 20px;
   font-weight: bold;
-  color: #404040;
+  color: rgba(255, 255, 255, 0.75);
 `
 
 export const Label = styled.label`
@@ -44,18 +44,18 @@ type ActionButtonVariant = "attack" | "shield" | "charge"
 const handleButtonBackground = (variant: ButtonVariant) => {
   switch (variant) {
     case "primary":
-      return "#111111"
-    case "secondary":
       return "#E5E5E5"
+    case "secondary":
+      return "#111111"
   }
 }
 
 const handleButtonTextColor = (variant: ButtonVariant) => {
   switch (variant) {
     case "primary":
-      return "#ffffff"
-    case "secondary":
       return "#111111"
+    case "secondary":
+      return "#ffffff"
   }
 }
 
@@ -69,10 +69,11 @@ export const Button = styled.button<{
   border-radius: 4px;
   height: 48px;
   width: 100%;
+  transition: all 0.12s ease-out;
   &:hover,
   &:active {
     background-color: ${({ variant }) =>
-      variant === "primary" ? "rgba(0, 0, 0, 0.75)" : "default"};
+      variant === "primary" ? "#BEBEBE" : "#262626"};
     filter: ${({ variant }) =>
       variant === "primary" ? "none" : "brightness(90%)"};
   }
@@ -81,9 +82,9 @@ export const Button = styled.button<{
 const handleTextButtonColor = (state: ButtonState) => {
   switch (state) {
     case "enabled":
-      return "#111111"
+      return "white"
     case "disabled":
-      return "#dadada"
+      return "rgba(255, 255, 255, 0.2)"
   }
 }
 
@@ -100,18 +101,18 @@ export const TextButton = styled.button<{
   &:hover,
   &:active {
     color: ${({ state }) =>
-      state === "enabled" ? "rgba(0, 0, 0, 0.75)" : "default"};
+      state === "enabled" ? "rgba(255, 255, 255, 0.8)" : "default"};
   }
 `
 
 const handleActionButtonColor = (state: ActionButtonVariant) => {
   switch (state) {
     case "attack":
-      return "#D54645"
+      return "#D94C4C"
     case "shield":
-      return "#324E68"
+      return "#4782B2"
     case "charge":
-      return "#333333"
+      return "#6B6E75"
   }
 }
 
@@ -132,15 +133,16 @@ export const ActionButton = styled.button<{
 `
 
 export const TextInputField = styled.input`
-  border: 2px solid black;
   height: 48px;
   border-radius: 4px;
   padding: 18px;
   transition: all 0.12s ease-out;
   font-size: 14px;
+  color: white;
+  background: rgba(255, 255, 255, 0.15);
   &:hover,
   &:active {
-    border: 2px solid rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.2);
   }
 `
 
