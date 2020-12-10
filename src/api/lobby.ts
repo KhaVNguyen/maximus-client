@@ -19,7 +19,7 @@ export async function createNewLobby(
       lobbyState: response.data,
     }
   } catch (error) {
-    return { success: false, error: error }
+    return { success: false, error: error.message }
   }
 }
 
@@ -45,6 +45,6 @@ export async function joinLobby(
       lobbyState: response.data,
     }
   } catch (error) {
-    return { success: false, error: error?.response?.data }
+    return { success: false, error: error.message }
   }
 }

@@ -1,32 +1,46 @@
 import { createContext } from "react"
 import io from "socket.io-client"
-import { useDispatch } from "react-redux"
-import { Move, LobbySliceState } from "store/entities/lobby"
+import { Move } from "store/entities/lobby"
 
 export interface WebSocketContextProps {
-  socket: any
-  sendTurn: Function
+  socket: SocketIOClient.Socket
+  sendTurn: (payload: TurnPayload) => void
+  sendJoin: (payload: JoinPayload) => void
+  sendLeave: (payload: LeavePayload) => void
 }
 
 const WebSocketContext = createContext<WebSocketContextProps | null>(null)
 
-export interface ClientPayload {
+export interface TurnPayload {
   lobbyCode: string
   user: string
   move?: Move
   target?: string
 }
 
-export interface WebSocket {
-  socket: SocketIOClient.Socket
-  sendTurn: (payload: ClientPayload) => void
+export interface JoinPayload {
+  lobbyCode: string
+  user: string
+}
+
+export interface LeavePayload {
+  lobbyCode: string
+  user: string
 }
 
 export function setupWebSocket() {
   const socket = io("http://localhost:5000")
 
-  function sendTurn(payload: ClientPayload) {
+  function sendTurn(payload: TurnPayload) {
     socket.emit("make-move", JSON.stringify(payload))
+  }
+
+  function sendJoin(payload: JoinPayload) {
+    socket.emit("join", JSON.stringify(payload))
+  }
+
+  function sendLeave(payload: LeavePayload) {
+    socket.emit("leave", JSON.stringify(payload))
   }
 
   socket.on("get-lobby", (serverPayload: string) => {
@@ -37,6 +51,8 @@ export function setupWebSocket() {
   const ws = {
     socket: socket,
     sendTurn,
+    sendJoin,
+    sendLeave,
   }
 
   return ws

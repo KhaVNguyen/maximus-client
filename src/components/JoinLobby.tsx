@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useState, useContext } from "react"
 import styled from "styled-components"
 import { motion } from "framer-motion"
 import TextInput from "components/TextInput"
@@ -9,6 +9,7 @@ import { setLobbyState } from "store/entities/lobby"
 import { getName } from "store/entities/settings"
 import { joinLobby } from "api/lobby"
 import { showAlert } from "helpers"
+import WebSocketContext from "api/websocket"
 
 const ContainerAnimation = {
   hidden: { opacity: 0, y: -32 },
@@ -21,10 +22,16 @@ const JoinLobby: FunctionComponent = () => {
   const name = useSelector(getName)
   const [lobbyCode, setLobbyCode] = useState("")
 
+  const ws = useContext(WebSocketContext)
+
   async function handleJoinLobby() {
     const { success, error, lobbyState } = await joinLobby(lobbyCode, name)
     if (success && lobbyState) {
       dispatch(setLobbyState(lobbyState))
+      ws?.sendJoin({
+        lobbyCode: lobbyState._id,
+        user: name,
+      })
       router.push(`/lobbies/${lobbyState._id}`)
     } else {
       const shownError = error ?? ""

@@ -1,6 +1,6 @@
-import { useEffect, FunctionComponent } from "react"
+import { FunctionComponent, useContext } from "react"
 import styled from "styled-components"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { useRouter } from "next/router"
 import { motion, AnimateSharedLayout } from "framer-motion"
 import Layout from "styles/Layout"
@@ -10,21 +10,25 @@ import {
   Button,
   ContainerAnimation,
 } from "styles/Components"
+import { getName } from "store/entities/settings"
 import {
   getNumberOfPlayers,
   getIsHost,
   getCanStartGame,
 } from "store/entities/lobby"
 import PlayersContainer from "components/PlayersContainer"
+import WebSocketContext, { LeavePayload } from "api/websocket"
 
 const Lobby: FunctionComponent = () => {
-  const dispatch = useDispatch()
   const router = useRouter()
   const code = router.query.code
 
+  const name = useSelector(getName)
   const numberOfPlayers = useSelector(getNumberOfPlayers)
   const isHost = useSelector(getIsHost)
   const canStartGame = useSelector(getCanStartGame)
+
+  const ws = useContext(WebSocketContext)
 
   return (
     <Layout>
@@ -54,6 +58,14 @@ const Lobby: FunctionComponent = () => {
             <Button
               variant="secondary"
               onClick={() => {
+                if (typeof code == "string") {
+                  const leavePayload: LeavePayload = {
+                    lobbyCode: code,
+                    user: name,
+                  }
+                  console.log(leavePayload)
+                  ws?.sendLeave(leavePayload)
+                }
                 router.push("/")
               }}
             >

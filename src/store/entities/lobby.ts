@@ -1,5 +1,5 @@
 import { createSlice, current, PayloadAction } from "@reduxjs/toolkit"
-import { ClientPayload, WebSocketContextProps } from "api/websocket"
+import { TurnPayload, WebSocketContextProps } from "api/websocket"
 import { RootState } from "store/reducer"
 
 export type Move = "attack" | "shield" | "charge"
@@ -72,7 +72,7 @@ const lobbySlice = createSlice({
       if (currentPlayer) {
         currentPlayer.turn.target = target
         try {
-          const payload: ClientPayload = {
+          const payload: TurnPayload = {
             lobbyCode: lobby._id,
             user: currentPlayer.name,
             move: currentPlayer.turn.move,

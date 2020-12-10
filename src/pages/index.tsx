@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useState, useContext } from "react"
 import styled from "styled-components"
 import { AnimateSharedLayout, motion } from "framer-motion"
 import { useSelector, useDispatch } from "react-redux"
@@ -13,8 +13,11 @@ import { createNewLobby } from "api/lobby"
 import ReactNotification, { store } from "react-notifications-component"
 import "react-notifications-component/dist/theme.css"
 import { showAlert } from "helpers"
+import WebSocketContext from "api/websocket"
 
 const Home: FunctionComponent = () => {
+  const ws = useContext(WebSocketContext)
+
   type State = "default" | "enter-lobby-code"
   const [currentState, setCurrentState] = useState<State>("default")
 
@@ -25,13 +28,19 @@ const Home: FunctionComponent = () => {
 
   async function handleCreateNewLobby() {
     const { success, lobbyState, error } = await createNewLobby(name)
+    console.log(error)
     if (success && lobbyState) {
       dispatch(setLobbyState(lobbyState))
+      ws?.sendJoin({
+        lobbyCode: lobbyState._id,
+        user: name,
+      })
       router.push(`/lobbies/${lobbyState._id}`)
     } else {
       const errorShown = error ?? "Error creating lobby"
+      console.log("errorShown:", errorShown)
       if (error) {
-        showAlert("error", "Error", errorShown)
+        showAlert("danger", "Error", errorShown)
       }
     }
   }
