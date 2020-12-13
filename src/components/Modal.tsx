@@ -22,8 +22,6 @@ const customStyles = {
   },
 }
 
-Modal.setAppElement("#app")
-
 const AppModal: React.FC<ModalProps> = ({
   isOpen,
   setOpen,
@@ -39,6 +37,7 @@ const AppModal: React.FC<ModalProps> = ({
       style={customStyles}
       contentLabel="Example Modal"
       closeTimeoutMS={128}
+      ariaHideApp={false}
     >
       <ModalContent>
         <Subtitle>How To Play</Subtitle>
