@@ -80,6 +80,9 @@ const PlayerRing: FunctionComponent = () => {
     playerList?.find((p) => p.name == playerName)?.turn?.move != null &&
     playerList?.find((p) => p.name == playerName)?.turn?.target != null
 
+  const playerShield = playerList?.find((p) => p.name == playerName)?.shield
+  const canShield = playerShield != null && playerShield > 0
+
   const gameWinner = playerList?.find((p) => p.health > 0)
 
   return (
@@ -103,6 +106,7 @@ const PlayerRing: FunctionComponent = () => {
               <Divider>|</Divider>
               <Health>{player.health}</Health>
             </PlayerStats>
+            {/* <TurnStatusMessage>-10</TurnStatusMessage> */}
             {player?.turn?.move && (
               <PlayerMove color={getMoveDisplayColor(player.turn.move)}>
                 {getMoveDisplayText(player.turn)}
@@ -128,14 +132,16 @@ const PlayerRing: FunctionComponent = () => {
               >
                 Attack
               </ActionButton>
-              <ActionButton
-                variant="shield"
-                onClick={() => {
-                  onSelectMove("shield")
-                }}
-              >
-                Shield
-              </ActionButton>
+              {canShield && (
+                <ActionButton
+                  variant="shield"
+                  onClick={() => {
+                    onSelectMove("shield")
+                  }}
+                >
+                  Shield
+                </ActionButton>
+              )}
               <ActionButton
                 variant="charge"
                 onClick={() => {
@@ -294,6 +300,7 @@ const ActionsRow = styled.div`
 
 const PromptContainer = styled(motion.div)`
   display: flex;
+  flex-direction: column;
   position: absolute;
   top: 0px;
   left: 0px;
@@ -310,6 +317,13 @@ const Prompt = styled.p`
 
 const GameOverPrompt = styled(Prompt)`
   color: #b11213;
+  margin-bottom: 12px;
+`
+
+const TurnStatusMessage = styled.div`
+  position: absolute;
+  top: -32px;
+  color: white;
 `
 
 export default PlayerRing

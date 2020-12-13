@@ -185,3 +185,10 @@ export const FadeIn = {
     scale: 0.6,
   },
 }
+
+export const Selectable = styled.span`
+  -webkit-user-select: text; /* Safari */
+  -moz-user-select: text; /* Firefox */
+  -ms-user-select: text; /* IE10+/Edge */
+  user-select: text; /* Standard */
+`

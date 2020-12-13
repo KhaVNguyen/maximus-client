@@ -1,19 +1,22 @@
-import { FunctionComponent, useState } from "react"
+import { FunctionComponent, useState, useContext } from "react"
 import styled from "styled-components"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import { useRouter } from "next/router"
 import { motion, AnimateSharedLayout } from "framer-motion"
 import Layout from "styles/Layout"
 import { Subtitle, PageTitle, ContainerAnimation } from "styles/Components"
 import { getNumberOfPlayers } from "store/entities/lobby"
+import { getName } from "store/entities/settings"
 import PlayerRing from "components/PlayerRing"
 import Modal from "components/Modal"
+import { LeavePayload, WebSocketContext } from "api/websocket"
 
 const Lobby: FunctionComponent = () => {
-  const dispatch = useDispatch()
+  const ws = useContext(WebSocketContext)
   const router = useRouter()
   const code = router.query.code
   const numberOfPlayers = useSelector(getNumberOfPlayers)
+  const name = useSelector(getName)
   const [modalOpen, setModalOpen] = useState(false)
 
   return (
@@ -45,6 +48,13 @@ const Lobby: FunctionComponent = () => {
               </Legend>
               <SubtleButton
                 onClick={() => {
+                  if (typeof code == "string") {
+                    const leavePayload: LeavePayload = {
+                      lobbyCode: code,
+                      user: name,
+                    }
+                    ws?.sendLeave(leavePayload)
+                  }
                   router.push("/")
                 }}
               >

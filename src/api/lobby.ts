@@ -1,5 +1,6 @@
 import axios from "axios"
 import { LobbySliceState } from "store/entities/lobby"
+import { API_BASE } from "config"
 
 interface CreateNewLobbyResponse {
   success: boolean
@@ -11,7 +12,7 @@ export async function createNewLobby(
   name: string
 ): Promise<CreateNewLobbyResponse> {
   try {
-    const response = await axios.post("http://localhost:5000/v1/lobbies/", {
+    const response = await axios.post(`${API_BASE}/v1/lobbies/`, {
       name,
     })
 
@@ -35,12 +36,9 @@ export async function joinLobby(
   name: string
 ): Promise<JoinLobbyResponse> {
   try {
-    const response = await axios.post(
-      `http://localhost:5000/v1/lobbies/${lobbyCode}`,
-      {
-        name,
-      }
-    )
+    const response = await axios.post(`${API_BASE}/v1/lobbies/${lobbyCode}`, {
+      name,
+    })
     return {
       success: true,
       lobbyState: response.data,
@@ -61,12 +59,9 @@ export async function kickPlayer(
   name: string
 ): Promise<KickPlayerResponse> {
   try {
-    const response = await axios.patch(
-      `http://localhost:5000/v1/lobbies/${lobbyCode}`,
-      {
-        name,
-      }
-    )
+    const response = await axios.patch(`${API_BASE}/v1/lobbies/${lobbyCode}`, {
+      name,
+    })
     return {
       success: true,
       lobbyState: response.data,

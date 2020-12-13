@@ -3,6 +3,7 @@ import io from "socket.io-client"
 import { useDispatch } from "react-redux"
 import { useRouter } from "next/router"
 import { Move, setLobbyState } from "store/entities/lobby"
+import { API_BASE } from "config"
 
 export interface WebSocketContextProps {
   socket: SocketIOClient.Socket
@@ -10,6 +11,7 @@ export interface WebSocketContextProps {
   sendJoin: (payload: JoinPayload) => void
   sendLeave: (payload: LeavePayload) => void
   sendStartGame: (payload: StartGamePayload) => void
+  sendKickUser: (payload: KickUserPayload) => void
 }
 
 const WebSocketContext = createContext<WebSocketContextProps | null>(null)
@@ -50,7 +52,7 @@ type WebSocketProps = React.PropsWithChildren<{}>
 
 export default function WebSocket({ children }: WebSocketProps) {
   const dispatch = useDispatch()
-  const socket = io("http://localhost:5000")
+  const socket = io(API_BASE)
   const router = useRouter()
 
   function sendTurn(payload: TurnPayload) {
@@ -93,11 +95,8 @@ export default function WebSocket({ children }: WebSocketProps) {
   })
 
   socket.on("kicked", (serverPayload: string) => {
-    const payload = JSON.parse(serverPayload)
-    dispatch(setLobbyState(payload))
-    router.push(`/`)
-
-    console.log("User Left: ", payload)
+    console.log("We got kicked...")
+    router.push("/")
   })
 
   socket.on("game-started", (serverPayload: string) => {
@@ -108,7 +107,6 @@ export default function WebSocket({ children }: WebSocketProps) {
 
   socket.on("game-status-changed", (serverPayload: string) => {
     const payload = JSON.parse(serverPayload)
-    console.log("payload from a game status change: ", payload)
 
     dispatch(setLobbyState(payload))
 

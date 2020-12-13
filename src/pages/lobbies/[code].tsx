@@ -9,6 +9,7 @@ import {
   PageTitle,
   Button,
   ContainerAnimation,
+  Selectable,
 } from "styles/Components"
 import { getName } from "store/entities/settings"
 import {
@@ -42,7 +43,9 @@ const Lobby: FunctionComponent = () => {
           animate="visible"
         >
           <TextContainer layout>
-            <PageTitle>Lobby: {code}</PageTitle>
+            <PageTitle>
+              Lobby: <Selectable>{code}</Selectable>
+            </PageTitle>
             <Subtitle>Players In Lobby: {numberOfPlayers}</Subtitle>
           </TextContainer>
           <PlayersContainer />
@@ -69,7 +72,6 @@ const Lobby: FunctionComponent = () => {
                     lobbyCode: code,
                     user: name,
                   }
-                  console.log(leavePayload)
                   ws?.sendLeave(leavePayload)
                 }
                 router.push("/")

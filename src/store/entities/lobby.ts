@@ -44,10 +44,7 @@ const lobbySlice = createSlice({
     setLobbyState: (lobby, action: PayloadAction<LobbySliceState>) => {
       lobby._id = action.payload._id
       lobby.players = action.payload.players
-      console.log("Gonna set this player list: ", action.payload.players)
       lobby.status = action.payload.status
-
-      console.log("now the lobby is: ", lobby)
     },
     // removePlayer: (
     //   lobby,
@@ -71,7 +68,6 @@ const lobbySlice = createSlice({
       if (currentPlayer) {
         currentPlayer.turn = {}
         currentPlayer.turn.move = action.payload.move
-        console.log(currentPlayer)
       }
     },
     selectTarget: (
@@ -93,7 +89,6 @@ const lobbySlice = createSlice({
             move: currentPlayer.turn.move,
             target: currentPlayer.turn.target,
           }
-          console.log("We're gonna send to the server this payload: ", payload)
           ws?.sendTurn(payload)
         } catch (error) {
           console.error(error)

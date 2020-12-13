@@ -37,10 +37,8 @@ const Home: FunctionComponent = () => {
       })
       router.push(`/lobbies/${lobbyState._id}`)
     } else {
-      const errorShown = error ?? "Error creating lobby"
-      console.log("errorShown:", errorShown)
       if (error) {
-        showAlert("danger", "Error", errorShown)
+        showAlert("danger", "Error", "Error creating lobby")
       }
     }
   }
