@@ -14,7 +14,6 @@ import ReactNotification from "react-notifications-component"
 import "react-notifications-component/dist/theme.css"
 import { showAlert } from "helpers"
 import { WebSocketContext } from "api/websocket"
-import Head from "components/Head"
 
 const Home: FunctionComponent = () => {
   const ws = useContext(WebSocketContext)
