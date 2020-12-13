@@ -114,10 +114,10 @@ const Legend = styled.div`
   display: flex;
 `
 
+/*
 const Label = styled.p`
   font-weight: bold;
 `
-
 const ShieldLabel = styled(Label)`
   color: #6f9cc1;
   margin-right: 4px;
@@ -132,5 +132,6 @@ const HealthLabel = styled(Label)`
   color: #f46a69;
   margin-left: 4px;
 `
+*/
 
 export default Lobby

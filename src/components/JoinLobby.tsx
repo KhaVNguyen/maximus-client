@@ -25,7 +25,7 @@ const JoinLobby: FunctionComponent = () => {
   const ws = useContext(WebSocketContext)
 
   async function handleJoinLobby() {
-    const { success, error, lobbyState } = await joinLobby(lobbyCode, name)
+    const { success, lobbyState } = await joinLobby(lobbyCode, name)
     if (success && lobbyState) {
       dispatch(setLobbyState(lobbyState))
       ws?.sendJoin({

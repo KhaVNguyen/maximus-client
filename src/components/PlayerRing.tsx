@@ -1,4 +1,4 @@
-import { FunctionComponent, useState, useContext } from "react"
+import { FunctionComponent, useContext } from "react"
 import styled from "styled-components"
 import { useDispatch, useSelector } from "react-redux"
 import { AnimatePresence, motion } from "framer-motion"
@@ -320,10 +320,10 @@ const GameOverPrompt = styled(Prompt)`
   margin-bottom: 12px;
 `
 
-const TurnStatusMessage = styled.div`
-  position: absolute;
-  top: -32px;
-  color: white;
-`
+// const TurnStatusMessage = styled.div`
+//   position: absolute;
+//   top: -32px;
+//   color: white;
+// `
 
 export default PlayerRing
