@@ -1,1 +1,1 @@
-export const API_BASE = "https://api.maximus.red"
+export const API_BASE = "https://server.api.maximus.red"
