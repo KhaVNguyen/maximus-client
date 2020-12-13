@@ -17,6 +17,7 @@
     "axios": "^0.21.0",
     "framer-motion": "^2.9.4",
     "next": "^9.4.2",
+    "next-google-fonts": "^1.2.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-modal": "^3.12.1",

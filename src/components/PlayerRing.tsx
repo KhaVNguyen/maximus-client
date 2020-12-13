@@ -186,7 +186,7 @@ const PlayerRing: FunctionComponent = () => {
             animate="visible"
             exit="exit"
           >
-            <Prompt>Here&apos;s What Happened..</Prompt>
+            <Prompt>Results</Prompt>
           </PromptContainer>
         )}
       </AnimatePresence>

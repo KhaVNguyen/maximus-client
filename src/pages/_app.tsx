@@ -10,7 +10,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider store={reduxStore}>
       <WebSocketProvider>
-        <Component {...pageProps} />
+        <Component {...pageProps} id="app" />
       </WebSocketProvider>
     </Provider>
   )
