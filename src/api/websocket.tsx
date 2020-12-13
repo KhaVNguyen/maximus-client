@@ -94,7 +94,7 @@ export default function WebSocket({ children }: WebSocketProps) {
     console.log("User Left: ", payload)
   })
 
-  socket.on("kicked", (serverPayload: string) => {
+  socket.on("kicked", () => {
     console.log("We got kicked...")
     router.push("/")
   })
