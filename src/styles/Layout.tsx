@@ -1,6 +1,8 @@
 import { createGlobalStyle } from "styled-components"
 
 export const GlobalStyle = createGlobalStyle`
+  @import url('https://fonts.googleapis.com/css2?family=PT+Serif:wght@400;700&display=swap');
+
   html {
     box-sizing: border-box;
     font-family: "PT Serif";
@@ -30,10 +32,6 @@ export const GlobalStyle = createGlobalStyle`
     outline: 0;
     padding: 0;
     margin: 0;
-    -webkit-user-select: none; /* Safari */        
-    -moz-user-select: none; /* Firefox */
-    -ms-user-select: none; /* IE10+/Edge */
-    user-select: none; /* Standard */
   }
 
   button {
