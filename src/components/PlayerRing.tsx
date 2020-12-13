@@ -6,33 +6,23 @@ import { ActionButton, FadeIn } from "styles/Components"
 import {
   getNumberOfPlayers,
   getPlayerList,
-  setLobbyState,
+  getGameStatus,
   Move,
   Turn,
   selectMove,
   selectTarget,
 } from "store/entities/lobby"
 import { getName } from "store/entities/settings"
-import WebSocketContext from "api/websocket"
-
-type CurrentStatus =
-  | "choosing-move"
-  | "choosing-target"
-  | "waiting-for-others"
-  | "viewing-result"
-  | "spectating"
+import { WebSocketContext } from "api/websocket"
 
 const PlayerRing: FunctionComponent = () => {
   const dispatch = useDispatch()
   const playerName = useSelector(getName)
   const playerList = useSelector(getPlayerList)
   const numberOfPlayers = useSelector(getNumberOfPlayers)
+  const gameStatus = useSelector(getGameStatus)
 
   const ws = useContext(WebSocketContext)
-
-  const [currentStatus, setCurrentStatus] = useState<CurrentStatus>(
-    "choosing-move"
-  )
 
   function getRingType(count: number): string {
     return `ring ring-${count}`
@@ -59,28 +49,38 @@ const PlayerRing: FunctionComponent = () => {
 
   function onSelectMove(move: Move) {
     dispatch(selectMove({ player: playerName, move }))
-    setCurrentStatus("choosing-target")
   }
 
   function onSelectTarget(target: string) {
     dispatch(selectTarget({ player: playerName, target, ws }))
-    setCurrentStatus("waiting-for-others")
   }
 
   function getTargetDisplayText() {
     const player = playerList.find((player) => player.name == playerName)
-    console.log(player)
-    if (player) {
+    if (player && player.turn) {
       const move = player.turn.move
-      console.log(move)
       if (move) {
         const capitalMove = move.charAt(0).toUpperCase() + move.slice(1)
-        console.log(capitalMove)
         return `${capitalMove} who?`
       }
     }
-    return "Something went wrong.."
+    return ""
   }
+
+  const isSelectingMove =
+    gameStatus == "waiting-for-turns" &&
+    playerList?.find((p) => p.name == playerName)?.turn == null
+
+  const isSelectingTarget =
+    gameStatus == "waiting-for-turns" &&
+    playerList?.find((p) => p.name == playerName)?.turn?.target == null
+
+  const chosenMoveAndTarget =
+    gameStatus == "waiting-for-turns" &&
+    playerList?.find((p) => p.name == playerName)?.turn?.move != null &&
+    playerList?.find((p) => p.name == playerName)?.turn?.target != null
+
+  const gameWinner = playerList?.find((p) => p.health > 0)
 
   return (
     <Container>
@@ -89,18 +89,19 @@ const PlayerRing: FunctionComponent = () => {
           <Player
             key={player.name}
             layout
-            selectable={currentStatus == "choosing-target"}
+            selectable={isSelectingTarget}
+            isYourPlayer={player.name === playerName}
             onClick={() => {
-              if (currentStatus == "choosing-target") {
+              if (isSelectingTarget) {
                 onSelectTarget(player.name)
               }
             }}
           >
             <PlayerName>{player.name}</PlayerName>
             <PlayerStats>
-              <Shield>{player.health}</Shield>
+              <Shield>{player.shield}</Shield>
               <Divider>|</Divider>
-              <Health>{player.shield}</Health>
+              <Health>{player.health}</Health>
             </PlayerStats>
             {player?.turn?.move && (
               <PlayerMove color={getMoveDisplayColor(player.turn.move)}>
@@ -111,7 +112,7 @@ const PlayerRing: FunctionComponent = () => {
         ))}
       </Ring>
       <AnimatePresence>
-        {currentStatus == "choosing-move" && (
+        {isSelectingMove && (
           <Actions
             variants={FadeIn}
             initial="hidden"
@@ -148,7 +149,7 @@ const PlayerRing: FunctionComponent = () => {
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {currentStatus == "choosing-target" && (
+        {isSelectingTarget && (
           <PromptContainer
             variants={FadeIn}
             initial="hidden"
@@ -160,7 +161,7 @@ const PlayerRing: FunctionComponent = () => {
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {currentStatus == "waiting-for-others" && (
+        {gameStatus == "waiting-for-turns" && chosenMoveAndTarget && (
           <PromptContainer
             variants={FadeIn}
             initial="hidden"
@@ -172,7 +173,7 @@ const PlayerRing: FunctionComponent = () => {
         )}
       </AnimatePresence>
       <AnimatePresence>
-        {currentStatus == "viewing-result" && (
+        {gameStatus == "showing-result" && (
           <PromptContainer
             variants={FadeIn}
             initial="hidden"
@@ -180,6 +181,19 @@ const PlayerRing: FunctionComponent = () => {
             exit="exit"
           >
             <Prompt>Here&apos;s What Happened..</Prompt>
+          </PromptContainer>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {gameStatus == "game-over" && (
+          <PromptContainer
+            variants={FadeIn}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <GameOverPrompt>Game Over</GameOverPrompt>
+            <Prompt>{gameWinner?.name} Won</Prompt>
           </PromptContainer>
         )}
       </AnimatePresence>
@@ -192,8 +206,13 @@ const Container = styled.div`
 `
 const Ring = styled.ul``
 
-const Player = styled(motion.li)<{ selectable: boolean }>`
+const Player = styled(motion.li)<{
+  selectable: boolean
+  isYourPlayer: boolean
+}>`
   background: #494a4b;
+
+  border: ${(props) => (props.isYourPlayer ? "2px solid white" : "none")};
   border-radius: 6px;
   cursor: ${(props) => (props.selectable ? "pointer" : "default")};
   transition: all 0.12s ease-out;
@@ -287,6 +306,10 @@ const PromptContainer = styled(motion.div)`
 const Prompt = styled.p`
   font-size: 20px;
   font-weight: bold;
+`
+
+const GameOverPrompt = styled(Prompt)`
+  color: #b11213;
 `
 
 export default PlayerRing

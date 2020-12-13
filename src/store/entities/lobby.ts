@@ -1,6 +1,7 @@
-import { createSlice, current, PayloadAction } from "@reduxjs/toolkit"
+import { createSlice, PayloadAction } from "@reduxjs/toolkit"
 import { TurnPayload, WebSocketContextProps } from "api/websocket"
 import { RootState } from "store/reducer"
+import { GameStatus } from "api/websocket"
 
 export type Move = "attack" | "shield" | "charge"
 
@@ -26,11 +27,13 @@ interface PlayerState {
 
 export interface LobbySliceState {
   _id: string
+  status: GameStatus
   players: PlayerState[]
 }
 
 const initialState: LobbySliceState = {
   _id: "",
+  status: "waiting-for-turns",
   players: [],
 }
 
@@ -41,12 +44,23 @@ const lobbySlice = createSlice({
     setLobbyState: (lobby, action: PayloadAction<LobbySliceState>) => {
       lobby._id = action.payload._id
       lobby.players = action.payload.players
+      console.log("Gonna set this player list: ", action.payload.players)
+      lobby.status = action.payload.status
+
+      console.log("now the lobby is: ", lobby)
     },
-    removePlayer: (lobby, action: PayloadAction<string>) => {
-      lobby.players = lobby.players.filter(
-        (player) => player.name != action.payload
-      )
-    },
+    // removePlayer: (
+    //   lobby,
+    //   action: PayloadAction<{
+    //     host: string
+    //     target: string
+    //     ws: WebSocketContextProps | null
+    //   }>
+    // ) => {
+    //   lobby.players = lobby.players.filter(
+    //     (player) => player.name != action.payload.target
+    //   )
+    // },
     selectMove: (
       lobby,
       action: PayloadAction<{ player: string; move: Move }>
@@ -57,6 +71,7 @@ const lobbySlice = createSlice({
       if (currentPlayer) {
         currentPlayer.turn = {}
         currentPlayer.turn.move = action.payload.move
+        console.log(currentPlayer)
       }
     },
     selectTarget: (
@@ -100,10 +115,11 @@ export const getIsHost = (state: RootState): boolean =>
 export const getCanStartGame = (state: RootState): boolean =>
   state.entities.lobby.players.length >= 2
 
-export const {
-  setLobbyState,
-  removePlayer,
-  selectMove,
-  selectTarget,
-} = lobbySlice.actions
+export const getGameStatus = (state: RootState): GameStatus =>
+  state.entities.lobby.status
+
+export const getLobbyCode = (state: RootState): string =>
+  state.entities.lobby._id
+
+export const { setLobbyState, selectMove, selectTarget } = lobbySlice.actions
 export default lobbySlice.reducer

@@ -1,14 +1,35 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useContext } from "react"
 import { motion } from "framer-motion"
 import { useSelector, useDispatch } from "react-redux"
 import styled from "styled-components"
-import { getPlayerList, removePlayer, getIsHost } from "store/entities/lobby"
+import { getPlayerList, getIsHost } from "store/entities/lobby"
 import XIcon from "public/x.svg"
+import { kickPlayer } from "api/lobby"
+import { getLobbyCode, setLobbyState } from "store/entities/lobby"
+import { showAlert } from "helpers"
+import { WebSocketContext } from "api/websocket"
 
 const PlayersContainer: FunctionComponent = () => {
   const dispatch = useDispatch()
   const playerList = useSelector(getPlayerList)
   const isHost = useSelector(getIsHost)
+  const lobbyCode: string = useSelector(getLobbyCode)
+
+  const ws = useContext(WebSocketContext)
+
+  async function handleKickPlayer(player: string) {
+    const { success, error, lobbyState } = await kickPlayer(lobbyCode, player)
+    if (success && lobbyState) {
+      dispatch(setLobbyState(lobbyState))
+      ws?.sendLeave({
+        lobbyCode: lobbyState._id,
+        user: player,
+      })
+    } else {
+      const shownError = error ?? ""
+      showAlert("danger", "Error", "Error kickingplayer: " + shownError)
+    }
+  }
 
   return (
     <Container layout>
@@ -17,7 +38,7 @@ const PlayersContainer: FunctionComponent = () => {
           {isHost && (
             <XIcon
               onClick={() => {
-                dispatch(removePlayer(player.name))
+                handleKickPlayer(player.name)
               }}
             />
           )}

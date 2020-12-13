@@ -14,6 +14,7 @@ export async function createNewLobby(
     const response = await axios.post("http://localhost:5000/v1/lobbies/", {
       name,
     })
+
     return {
       success: true,
       lobbyState: response.data,
@@ -35,6 +36,32 @@ export async function joinLobby(
 ): Promise<JoinLobbyResponse> {
   try {
     const response = await axios.post(
+      `http://localhost:5000/v1/lobbies/${lobbyCode}`,
+      {
+        name,
+      }
+    )
+    return {
+      success: true,
+      lobbyState: response.data,
+    }
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+
+interface KickPlayerResponse {
+  success: boolean
+  error?: string
+  lobbyState?: LobbySliceState
+}
+
+export async function kickPlayer(
+  lobbyCode: string,
+  name: string
+): Promise<KickPlayerResponse> {
+  try {
+    const response = await axios.patch(
       `http://localhost:5000/v1/lobbies/${lobbyCode}`,
       {
         name,

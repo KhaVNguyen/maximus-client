@@ -1,15 +1,16 @@
 import { Provider } from "react-redux"
-import WebSocketContext, { setupWebSocket } from "api/websocket"
 import configureStore from "store/configureStore"
+import WebSocketProvider from "api/websocket"
 import "styles/ring.scss"
+import "styles/modal.scss"
 
 export const reduxStore = configureStore()
 const MyApp = ({ Component, pageProps }) => {
   return (
     <Provider store={reduxStore}>
-      <WebSocketContext.Provider value={setupWebSocket()}>
+      <WebSocketProvider>
         <Component {...pageProps} />
-      </WebSocketContext.Provider>
+      </WebSocketProvider>
     </Provider>
   )
 }

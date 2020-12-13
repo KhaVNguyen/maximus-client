@@ -9,7 +9,7 @@ import { setLobbyState } from "store/entities/lobby"
 import { getName } from "store/entities/settings"
 import { joinLobby } from "api/lobby"
 import { showAlert } from "helpers"
-import WebSocketContext from "api/websocket"
+import { WebSocketContext } from "api/websocket"
 
 const ContainerAnimation = {
   hidden: { opacity: 0, y: -32 },
@@ -34,8 +34,7 @@ const JoinLobby: FunctionComponent = () => {
       })
       router.push(`/lobbies/${lobbyState._id}`)
     } else {
-      const shownError = error ?? ""
-      showAlert("danger", "Error", "Error joining lobby: " + shownError)
+      showAlert("danger", "Error", "Error joining lobby.")
     }
   }
 

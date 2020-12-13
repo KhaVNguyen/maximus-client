@@ -1,18 +1,20 @@
-import { FunctionComponent } from "react"
+import { FunctionComponent, useState } from "react"
 import styled from "styled-components"
 import { useDispatch, useSelector } from "react-redux"
 import { useRouter } from "next/router"
 import { motion, AnimateSharedLayout } from "framer-motion"
 import Layout from "styles/Layout"
 import { Subtitle, PageTitle, ContainerAnimation } from "styles/Components"
-import { getNumberOfPlayers, setLobbyState } from "store/entities/lobby"
+import { getNumberOfPlayers } from "store/entities/lobby"
 import PlayerRing from "components/PlayerRing"
+import Modal from "components/Modal"
 
 const Lobby: FunctionComponent = () => {
   const dispatch = useDispatch()
   const router = useRouter()
   const code = router.query.code
   const numberOfPlayers = useSelector(getNumberOfPlayers)
+  const [modalOpen, setModalOpen] = useState(false)
 
   return (
     <Layout>
@@ -30,21 +32,29 @@ const Lobby: FunctionComponent = () => {
             </TextContainer>
             <RightContainer>
               <Legend>
-                <ShieldLabel>Shield</ShieldLabel>
+                {/* <ShieldLabel>Shield</ShieldLabel>
                 <Divider>|</Divider>
-                <HealthLabel>Health</HealthLabel>
+                <HealthLabel>Health</HealthLabel> */}
+                <SubtleButton
+                  onClick={() => {
+                    setModalOpen(true)
+                  }}
+                >
+                  How To Play
+                </SubtleButton>
               </Legend>
-              <ExitButton
+              <SubtleButton
                 onClick={() => {
                   router.push("/")
                 }}
               >
                 Exit Game
-              </ExitButton>
+              </SubtleButton>
             </RightContainer>
           </TopContainer>
           <PlayerRing />
         </Container>
+        <Modal isOpen={modalOpen} setOpen={setModalOpen} />
       </AnimateSharedLayout>
     </Layout>
   )
@@ -75,10 +85,12 @@ const RightContainer = styled.div`
   align-items: center;
 `
 
-const ExitButton = styled.button`
+const SubtleButton = styled.button`
   cursor: pointer;
   background: rgba(255, 255, 255, 0.05);
-  padding: 8px 24px;
+  /* padding: 8px 24px; */
+  width: 128px;
+  height: 36px;
   margin-top: 12px;
   border-radius: 4px;
   color: #b4b5b4;

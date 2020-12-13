@@ -13,7 +13,7 @@ import { createNewLobby } from "api/lobby"
 import ReactNotification, { store } from "react-notifications-component"
 import "react-notifications-component/dist/theme.css"
 import { showAlert } from "helpers"
-import WebSocketContext from "api/websocket"
+import { WebSocketContext } from "api/websocket"
 
 const Home: FunctionComponent = () => {
   const ws = useContext(WebSocketContext)

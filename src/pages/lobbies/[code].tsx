@@ -15,9 +15,10 @@ import {
   getNumberOfPlayers,
   getIsHost,
   getCanStartGame,
+  getLobbyCode,
 } from "store/entities/lobby"
 import PlayersContainer from "components/PlayersContainer"
-import WebSocketContext, { LeavePayload } from "api/websocket"
+import { WebSocketContext, LeavePayload } from "api/websocket"
 
 const Lobby: FunctionComponent = () => {
   const router = useRouter()
@@ -27,6 +28,7 @@ const Lobby: FunctionComponent = () => {
   const numberOfPlayers = useSelector(getNumberOfPlayers)
   const isHost = useSelector(getIsHost)
   const canStartGame = useSelector(getCanStartGame)
+  const lobbyCode = useSelector(getLobbyCode)
 
   const ws = useContext(WebSocketContext)
 
@@ -49,6 +51,10 @@ const Lobby: FunctionComponent = () => {
               <Button
                 variant="primary"
                 onClick={() => {
+                  ws?.sendStartGame({
+                    lobbyCode,
+                    user: name,
+                  })
                   router.push(`/games/${code}`)
                 }}
               >
