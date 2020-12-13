@@ -18,7 +18,7 @@ export const Subtitle = styled.h2`
 `
 
 export const Label = styled.label`
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
   margin-bottom: 8px;
 `
@@ -137,7 +137,7 @@ export const TextInputField = styled.input`
   border-radius: 4px;
   padding: 18px;
   transition: all 0.12s ease-out;
-  font-size: 14px;
+  font-size: 16px;
   color: white;
   background: rgba(255, 255, 255, 0.15);
   &:hover,

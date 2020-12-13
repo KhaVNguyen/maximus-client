@@ -47,7 +47,6 @@ const Home: FunctionComponent = () => {
   return (
     <AnimateSharedLayout>
       <ReactNotification />
-      <Head title="Maximus" />
       <Layout>
         <Container
           layout
