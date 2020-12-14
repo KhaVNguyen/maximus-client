@@ -47,26 +47,3 @@ export async function joinLobby(
     return { success: false, error: error.message }
   }
 }
-
-interface KickPlayerResponse {
-  success: boolean
-  error?: string
-  lobbyState?: LobbySliceState
-}
-
-export async function kickPlayer(
-  lobbyCode: string,
-  name: string
-): Promise<KickPlayerResponse> {
-  try {
-    const response = await axios.patch(`${API_BASE}/v1/lobbies/${lobbyCode}`, {
-      name,
-    })
-    return {
-      success: true,
-      lobbyState: response.data,
-    }
-  } catch (error) {
-    return { success: false, error: error.message }
-  }
-}
