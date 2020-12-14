@@ -2,12 +2,7 @@ import { FunctionComponent, useContext } from "react"
 import styled from "styled-components"
 import { useDispatch, useSelector } from "react-redux"
 import { AnimatePresence, motion } from "framer-motion"
-import {
-  ActionButton,
-  FadeIn,
-  DamageDealtAnimation,
-  DamageTakenAnimation,
-} from "styles/Components"
+import { ActionButton, FadeIn, DamageTakenAnimation } from "styles/Components"
 import {
   getPlayerList,
   getGameStatus,
@@ -339,10 +334,6 @@ const GameOverPrompt = styled(Prompt)`
 const DamageTaken = styled(motion.div)`
   position: absolute;
   top: -32px;
-  color: #f46a69;
-`
-
-const DealtText = styled.span`
   color: #f46a69;
 `
 
