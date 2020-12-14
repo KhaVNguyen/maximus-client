@@ -28,9 +28,10 @@ const Home: FunctionComponent = () => {
 
   async function handleCreateNewLobby() {
     const { success, lobbyState, error } = await createNewLobby(name)
-    console.log(error)
     if (success && lobbyState) {
       dispatch(setLobbyState(lobbyState))
+      console.log("websocket: ", ws)
+      //@ts-ignore
       ws?.sendJoin({
         lobbyCode: lobbyState._id,
         user: name,

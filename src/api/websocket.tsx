@@ -1,23 +1,11 @@
-import { createContext } from "react"
+import { createContext, useState, useEffect } from "react"
 import io from "socket.io-client"
-import { useDispatch } from "react-redux"
-import { useRouter } from "next/router"
-import { Move, setLobbyState } from "store/entities/lobby"
 import { API_BASE } from "config"
+import { useRouter } from "next/router"
+import { useDispatch } from "react-redux"
+import { setLobbyState, Move } from "store/entities/lobby"
 
-export interface WebSocketContextProps {
-  socket?: SocketIOClient.Socket | null
-  sendTurn: (payload: TurnPayload) => void
-  sendJoin: (payload: JoinPayload) => void
-  sendLeave: (payload: LeavePayload) => void
-  sendStartGame: (payload: StartGamePayload) => void
-  sendKickUser: (payload: KickUserPayload) => void
-}
-
-const WebSocketContext = createContext<WebSocketContextProps | null>(null)
-
-export { WebSocketContext }
-
+/* Payload Types */
 export interface TurnPayload {
   lobbyCode: string
   user: string
@@ -46,53 +34,31 @@ export interface KickUserPayload {
   target: string
 }
 
-export type GameStatus = "waiting-for-turns" | "showing-result" | "game-over"
+export type GameStatus =
+  | "waiting-in-lobby"
+  | "waiting-for-turns"
+  | "showing-result"
+  | "game-over"
+
+export interface WebSocketContextProps {
+  socket: SocketIOClient.Socket | null
+  sendTurn: (payload: TurnPayload) => void
+  sendJoin: (payload: JoinPayload) => void
+  sendLeave: (payload: LeavePayload) => void
+  sendStartGame: (payload: StartGamePayload) => void
+  sendKickUser: (payload: KickUserPayload) => void
+}
+
+const WebSocketContext = createContext<WebSocketContextProps | null>(null)
 
 type WebSocketProps = React.PropsWithChildren<{}>
-
-export default function WebSocket({ children }: WebSocketProps) {
+const WebSocketWrapper = ({ children }: WebSocketProps) => {
+  const [socket, setSocket] = useState<SocketIOClient.Socket | null>(null)
   const dispatch = useDispatch()
-  let socket: SocketIOClient.Socket | null = null
-  let ws = null
   const router = useRouter()
-  console.log("setting up the websocket")
 
-  function sendTurn(payload: TurnPayload) {
-    socket?.emit("make-move", JSON.stringify(payload))
-  }
-
-  function sendJoin(payload: JoinPayload) {
-    socket?.emit("join", JSON.stringify(payload))
-  }
-
-  function sendLeave(payload: LeavePayload) {
-    socket?.emit("leave", JSON.stringify(payload))
-  }
-
-  function sendStartGame(payload: StartGamePayload) {
-    socket?.emit("start-game", JSON.stringify(payload))
-  }
-
-  function sendKickUser(payload: KickUserPayload) {
-    socket?.emit("kick-user", JSON.stringify(payload))
-  }
-
-  if (!socket) {
-    socket = io(API_BASE)
-    ws = {
-      socket: socket,
-      sendTurn,
-      sendJoin,
-      sendLeave,
-      sendStartGame,
-      sendKickUser,
-    }
-
-    socket.on("get-lobby", (serverPayload: string) => {
-      const payload = JSON.parse(serverPayload)
-      console.log(payload)
-    })
-
+  useEffect(() => {
+    const socket = io(API_BASE)
     socket.on("user-joined", (serverPayload: string) => {
       const payload = JSON.parse(serverPayload)
       dispatch(setLobbyState(payload))
@@ -143,9 +109,47 @@ export default function WebSocket({ children }: WebSocketProps) {
           break
       }
     })
+
+    setSocket(socket)
+  }, [])
+
+  function sendTurn(payload: TurnPayload) {
+    socket?.emit("make-move", JSON.stringify(payload))
+  }
+
+  function sendJoin(payload: JoinPayload) {
+    console.log("gonna send join to: ", socket?.id)
+    socket?.emit("join", JSON.stringify(payload))
+  }
+
+  function sendLeave(payload: LeavePayload) {
+    socket?.emit("leave", JSON.stringify(payload))
+  }
+
+  function sendStartGame(payload: StartGamePayload) {
+    socket?.emit("start-game", JSON.stringify(payload))
+  }
+
+  function sendKickUser(payload: KickUserPayload) {
+    socket?.emit("kick-user", JSON.stringify(payload))
   }
 
   return (
-    <WebSocketContext.Provider value={ws}>{children}</WebSocketContext.Provider>
+    <WebSocketContext.Provider
+      value={{
+        socket,
+        sendTurn,
+        sendJoin,
+        sendLeave,
+        sendStartGame,
+        sendKickUser,
+      }}
+    >
+      {children}
+    </WebSocketContext.Provider>
   )
 }
+
+export { WebSocketContext }
+
+export default WebSocketWrapper

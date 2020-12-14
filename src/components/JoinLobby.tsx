@@ -28,6 +28,9 @@ const JoinLobby: FunctionComponent = () => {
     const { success, lobbyState } = await joinLobby(lobbyCode, name)
     if (success && lobbyState) {
       dispatch(setLobbyState(lobbyState))
+      console.log("about to call send join on websocket")
+      console.log("websocket: ", ws)
+      // @ts-ignore
       ws?.sendJoin({
         lobbyCode: lobbyState._id,
         user: name,
