@@ -64,7 +64,8 @@ const AppModal: React.FC<ModalProps> = ({
             All player turns are executed at the <Bold>same time</Bold>
           </Instruction>
           <Instruction>
-            <Health>Attacking</Health> a player deals 10 damage
+            <Health>Attacking</Health> a player deals randomly between 5 - 10
+            damage
           </Instruction>
           <Instruction>
             If you receive the <Shield>Shield</Shield> action, you will take
@@ -73,7 +74,7 @@ const AppModal: React.FC<ModalProps> = ({
           </Instruction>
           <Instruction>
             <Charge>Charging </Charge> yourself allows you to do double damage
-            on the next round (20 damage)
+            on the next round
           </Instruction>
         </Instructions>
       </ModalContent>
