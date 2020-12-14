@@ -80,8 +80,9 @@ const PlayerRing: FunctionComponent = () => {
     playerList?.find((p) => p.name == playerName)?.turn?.move != null &&
     playerList?.find((p) => p.name == playerName)?.turn?.target != null
 
-  const playerShield = playerList?.find((p) => p.name == playerName)?.shield
-  const canShield = playerShield != null && playerShield > 0
+  // const playerShield = playerList?.find((p) => p.name == playerName)?.shield
+  // const canShield = playerShield != null && playerShield > 0
+  const canShield = true
 
   const gameWinner = playerList?.find((p) => p.health > 0)
 
@@ -102,8 +103,8 @@ const PlayerRing: FunctionComponent = () => {
           >
             <PlayerName>{player.name}</PlayerName>
             <PlayerStats>
-              <Shield>{player.shield}</Shield>
-              <Divider>|</Divider>
+              {/* <Shield>{player.shield}</Shield> */}
+              {/* <Divider>|</Divider> */}
               <Health>{player.health}</Health>
             </PlayerStats>
             {/* <TurnStatusMessage>-10</TurnStatusMessage> */}
@@ -249,6 +250,7 @@ const PlayerStats = styled.div`
   display: flex;
 `
 
+/*
 const Shield = styled(TextStat)`
   color: #6f9cc1;
   margin-right: 4px;
@@ -257,10 +259,11 @@ const Shield = styled(TextStat)`
 const Divider = styled(TextStat)`
   color: rgba(255, 255, 255, 0.8);
 `
+*/
 
 const Health = styled(TextStat)`
   color: #f46a69;
-  margin-left: 4px;
+  /* margin-left: 4px; */
 `
 
 const PlayerMove = styled(TextStat)<{ color: string }>`

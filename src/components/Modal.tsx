@@ -53,8 +53,7 @@ const AppModal: React.FC<ModalProps> = ({
             <Bold>Goal</Bold>: Be the last one standing
           </Instruction>
           <Instruction>
-            Every player starts with 50 <Shield>Shield</Shield> and 100{" "}
-            <Health>Health</Health>
+            Every player starts with 100 <Health>Health</Health>
           </Instruction>
           <Instruction>
             You can choose to either <Health>Attack</Health>,{" "}
@@ -68,9 +67,9 @@ const AppModal: React.FC<ModalProps> = ({
             <Health>Attacking</Health> a player deals 10 damage
           </Instruction>
           <Instruction>
-            If you receive the <Shield>Shield</Shield> action, you will take{" "}
-            <Shield>Shield</Shield> damage instead of <Health>Health</Health>{" "}
-            damage from an incoming <Health>Attack</Health>
+            If you receive the <Shield>Shield</Shield> action, you will take
+            half of the total damage of all incoming <Health>Attacks</Health>{" "}
+            that round
           </Instruction>
           <Instruction>
             <Charge>Charging </Charge> yourself allows you to do double damage
