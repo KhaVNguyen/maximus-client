@@ -116,6 +116,7 @@ export default function WebSocket({ children }: WebSocketProps) {
         break
       case "showing-result":
         console.log("Turns done and computed. Showing results now")
+        console.log(payload)
         dispatch(setLobbyState(payload))
         break
       case "game-over":

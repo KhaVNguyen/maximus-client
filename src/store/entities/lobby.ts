@@ -16,7 +16,7 @@ export interface Result {
   damageDealt: number
 }
 
-interface PlayerState {
+export interface PlayerState {
   name: string
   health: number
   damageTaken: number

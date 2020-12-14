@@ -7,7 +7,7 @@ import {
   getPlayerList,
   getGameStatus,
   Move,
-  Turn,
+  PlayerState,
   selectMove,
   selectTarget,
 } from "store/entities/lobby"
@@ -19,7 +19,6 @@ const PlayerRing: FunctionComponent = () => {
   const playerName = useSelector(getName)
   const playerList = useSelector(getPlayerList)
   const gameStatus = useSelector(getGameStatus)
-  const player = playerList.find((player) => player.name == playerName)
 
   const ws = useContext(WebSocketContext)
 
@@ -41,7 +40,8 @@ const PlayerRing: FunctionComponent = () => {
     }
   }
 
-  function getMoveDisplayText(turn: Turn) {
+  function getMoveDisplayText(player: PlayerState) {
+    const { turn } = player
     const target = turn.target ? `: ${turn.target}` : ""
     let returned = `${turn.move}${target}`
     if (
@@ -130,7 +130,7 @@ const PlayerRing: FunctionComponent = () => {
               </AnimatePresence>
               {player?.turn?.move && (
                 <PlayerMove color={getMoveDisplayColor(player.turn.move)}>
-                  {getMoveDisplayText(player.turn)}
+                  {getMoveDisplayText(player)}
                 </PlayerMove>
               )}
             </Player>
