@@ -108,20 +108,21 @@ export default function WebSocket({ children }: WebSocketProps) {
   socket.on("game-status-changed", async (serverPayload: string) => {
     const payload = JSON.parse(serverPayload)
 
-    dispatch(setLobbyState(payload))
-
     const { status } = payload // the status of the game
     switch (status) {
       case "waiting-for-turns":
         console.log("Currently waiting for player turns to be made..")
+        dispatch(setLobbyState(payload))
         break
       case "showing-result":
         console.log("Turns done and computed. Showing results now")
+        dispatch(setLobbyState(payload))
         break
       case "game-over":
         console.log("Somebody won the entire game. Game over.")
         await new Promise((resolve) => setTimeout(resolve, 5000))
         router.push(`/lobbies/${payload._id}`)
+        dispatch(setLobbyState(payload))
         break
     }
   })
