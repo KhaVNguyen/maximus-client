@@ -53,6 +53,7 @@ const Lobby: FunctionComponent = () => {
                       lobbyCode: code,
                       user: name,
                     }
+                    console.log(leavePayload)
                     ws?.sendLeave(leavePayload)
                   }
                   router.push("/")

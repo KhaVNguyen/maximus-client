@@ -6,7 +6,7 @@ import { Move, setLobbyState } from "store/entities/lobby"
 import { API_BASE } from "config"
 
 export interface WebSocketContextProps {
-  socket: SocketIOClient.Socket
+  socket?: SocketIOClient.Socket | null
   sendTurn: (payload: TurnPayload) => void
   sendJoin: (payload: JoinPayload) => void
   sendLeave: (payload: LeavePayload) => void
@@ -52,91 +52,97 @@ type WebSocketProps = React.PropsWithChildren<{}>
 
 export default function WebSocket({ children }: WebSocketProps) {
   const dispatch = useDispatch()
-  const socket = io(API_BASE)
+  let socket: SocketIOClient.Socket | null = null
+  let ws = null
   const router = useRouter()
+  console.log("setting up the websocket")
 
   function sendTurn(payload: TurnPayload) {
-    socket.emit("make-move", JSON.stringify(payload))
+    socket?.emit("make-move", JSON.stringify(payload))
   }
 
   function sendJoin(payload: JoinPayload) {
-    socket.emit("join", JSON.stringify(payload))
+    socket?.emit("join", JSON.stringify(payload))
   }
 
   function sendLeave(payload: LeavePayload) {
-    socket.emit("leave", JSON.stringify(payload))
+    socket?.emit("leave", JSON.stringify(payload))
   }
 
   function sendStartGame(payload: StartGamePayload) {
-    socket.emit("start-game", JSON.stringify(payload))
+    socket?.emit("start-game", JSON.stringify(payload))
   }
 
   function sendKickUser(payload: KickUserPayload) {
-    socket.emit("kick-user", JSON.stringify(payload))
+    socket?.emit("kick-user", JSON.stringify(payload))
   }
 
-  socket.on("get-lobby", (serverPayload: string) => {
-    const payload = JSON.parse(serverPayload)
-    console.log(payload)
-  })
-
-  socket.on("user-joined", (serverPayload: string) => {
-    const payload = JSON.parse(serverPayload)
-    dispatch(setLobbyState(payload))
-
-    console.log("UserJoined: ", payload)
-  })
-
-  socket.on("user-left", (serverPayload: string) => {
-    const payload = JSON.parse(serverPayload)
-    dispatch(setLobbyState(payload))
-
-    console.log("User Left: ", payload)
-  })
-
-  socket.on("kicked", () => {
-    console.log("We got kicked...")
-    router.push("/")
-  })
-
-  socket.on("game-started", (serverPayload: string) => {
-    const payload = JSON.parse(serverPayload)
-    dispatch(setLobbyState(payload))
-    router.push(`/games/${payload._id}`)
-  })
-
-  socket.on("game-status-changed", async (serverPayload: string) => {
-    const payload = JSON.parse(serverPayload)
-
-    const { status } = payload // the status of the game
-    switch (status) {
-      case "waiting-for-turns":
-        console.log("Currently waiting for player turns to be made..")
-        dispatch(setLobbyState(payload))
-        break
-      case "showing-result":
-        console.log("Turns done and computed. Showing results now")
-        console.log(payload)
-        dispatch(setLobbyState(payload))
-        break
-      case "game-over":
-        console.log("Somebody won the entire game. Game over.")
-        dispatch(setLobbyState(payload))
-        break
-      case "waiting-in-lobby":
-        router.push(`/lobbies/${payload._id}`)
-        dispatch(setLobbyState(payload))
-        break
+  if (!socket) {
+    socket = io(API_BASE)
+    ws = {
+      socket: socket,
+      sendTurn,
+      sendJoin,
+      sendLeave,
+      sendStartGame,
+      sendKickUser,
     }
-  })
 
-  const ws = {
-    socket: socket,
-    sendTurn,
-    sendJoin,
-    sendLeave,
-    sendStartGame,
-    sendKickUser,
+    socket.on("get-lobby", (serverPayload: string) => {
+      const payload = JSON.parse(serverPayload)
+      console.log(payload)
+    })
+
+    socket.on("user-joined", (serverPayload: string) => {
+      const payload = JSON.parse(serverPayload)
+      dispatch(setLobbyState(payload))
+
+      console.log("UserJoined: ", payload)
+    })
+
+    socket.on("user-left", (serverPayload: string) => {
+      const payload = JSON.parse(serverPayload)
+      dispatch(setLobbyState(payload))
+
+      console.log("User Left: ", payload)
+    })
+
+    socket.on("kicked", () => {
+      console.log("We got kicked...")
+      router.push("/")
+    })
+
+    socket.on("game-started", (serverPayload: string) => {
+      const payload = JSON.parse(serverPayload)
+      dispatch(setLobbyState(payload))
+      router.push(`/games/${payload._id}`)
+    })
+
+    socket.on("game-status-changed", async (serverPayload: string) => {
+      const payload = JSON.parse(serverPayload)
+
+      const { status } = payload // the status of the game
+      switch (status) {
+        case "waiting-for-turns":
+          console.log("Currently waiting for player turns to be made..")
+          dispatch(setLobbyState(payload))
+          break
+        case "showing-result":
+          console.log("Turns done and computed. Showing results now")
+          console.log(payload)
+          dispatch(setLobbyState(payload))
+          break
+        case "game-over":
+          console.log("Somebody won the entire game. Game over.")
+          dispatch(setLobbyState(payload))
+          break
+        case "waiting-in-lobby":
+          console.log("Going back to the lobby...")
+          router.push(`/lobbies/${payload._id}`)
+          dispatch(setLobbyState(payload))
+          break
+      }
+    })
   }
 
   return (
