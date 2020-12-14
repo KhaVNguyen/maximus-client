@@ -19,7 +19,8 @@ export interface Result {
 interface PlayerState {
   name: string
   health: number
-  shield: number
+  damageTaken: number
+  damageDealt: number
   isCharged: boolean
   turn: Turn
   results: Result

@@ -2,7 +2,12 @@ import { FunctionComponent, useContext } from "react"
 import styled from "styled-components"
 import { useDispatch, useSelector } from "react-redux"
 import { AnimatePresence, motion } from "framer-motion"
-import { ActionButton, FadeIn } from "styles/Components"
+import {
+  ActionButton,
+  FadeIn,
+  DamageDealtAnimation,
+  DamageTakenAnimation,
+} from "styles/Components"
 import {
   getPlayerList,
   getGameStatus,
@@ -19,6 +24,7 @@ const PlayerRing: FunctionComponent = () => {
   const playerName = useSelector(getName)
   const playerList = useSelector(getPlayerList)
   const gameStatus = useSelector(getGameStatus)
+  const player = playerList.find((player) => player.name == playerName)
 
   const ws = useContext(WebSocketContext)
 
@@ -42,7 +48,15 @@ const PlayerRing: FunctionComponent = () => {
 
   function getMoveDisplayText(turn: Turn) {
     const target = turn.target ? `: ${turn.target}` : ""
-    return `${turn.move}${target}`
+    let returned = `${turn.move}${target}`
+    if (
+      turn.move == "attack" &&
+      player?.damageDealt &&
+      player.damageDealt > 0
+    ) {
+      returned += ` [-${player?.damageDealt}]`
+    }
+    return returned
   }
 
   function onSelectMove(move: Move) {
@@ -78,8 +92,6 @@ const PlayerRing: FunctionComponent = () => {
     playerList.find((p) => p.name == playerName)?.turn?.move != null &&
     playerList.find((p) => p.name == playerName)?.turn?.target != null
 
-  // const playerShield = playerList?.find((p) => p.name == playerName)?.shield
-  // const canShield = playerShield != null && playerShield > 0
   const canShield = true
 
   const gameWinner = playerList.find((p) => p.health > 0)
@@ -107,11 +119,20 @@ const PlayerRing: FunctionComponent = () => {
             >
               <PlayerName>{player.name}</PlayerName>
               <PlayerStats>
-                {/* <Shield>{player.shield}</Shield> */}
-                {/* <Divider>|</Divider> */}
                 <Health>{player.health}</Health>
               </PlayerStats>
-              {/* <TurnStatusMessage>-10</TurnStatusMessage> */}
+              <AnimatePresence>
+                {gameStatus === "showing-result" && player.damageTaken > 0 && (
+                  <DamageTaken
+                    variants={DamageTakenAnimation}
+                    initial="hidden"
+                    animate="visible"
+                    exit="exit"
+                  >
+                    -{player.damageTaken}
+                  </DamageTaken>
+                )}
+              </AnimatePresence>
               {player?.turn?.move && (
                 <PlayerMove color={getMoveDisplayColor(player.turn.move)}>
                   {getMoveDisplayText(player.turn)}
@@ -254,20 +275,8 @@ const PlayerStats = styled.div`
   display: flex;
 `
 
-/*
-const Shield = styled(TextStat)`
-  color: #6f9cc1;
-  margin-right: 4px;
-`
-
-const Divider = styled(TextStat)`
-  color: rgba(255, 255, 255, 0.8);
-`
-*/
-
 const Health = styled(TextStat)`
   color: #f46a69;
-  /* margin-left: 4px; */
 `
 
 const PlayerMove = styled(TextStat)<{ color: string }>`
@@ -327,10 +336,14 @@ const GameOverPrompt = styled(Prompt)`
   margin-bottom: 12px;
 `
 
-// const TurnStatusMessage = styled.div`
-//   position: absolute;
-//   top: -32px;
-//   color: white;
-// `
+const DamageTaken = styled(motion.div)`
+  position: absolute;
+  top: -32px;
+  color: #f46a69;
+`
+
+const DealtText = styled.span`
+  color: #f46a69;
+`
 
 export default PlayerRing

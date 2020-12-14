@@ -186,6 +186,48 @@ export const FadeIn = {
   },
 }
 
+export const DamageTakenAnimation = {
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+    y: 12,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.9,
+    y: 12,
+  },
+}
+
+export const DamageDealtAnimation = {
+  hidden: {
+    opacity: 0,
+    scale: 0.9,
+    y: -12,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.3,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.9,
+    y: -12,
+  },
+}
+
 export const Selectable = styled.span`
   -webkit-user-select: text; /* Safari */
   -moz-user-select: text; /* Firefox */
