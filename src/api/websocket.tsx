@@ -105,7 +105,7 @@ export default function WebSocket({ children }: WebSocketProps) {
     router.push(`/games/${payload._id}`)
   })
 
-  socket.on("game-status-changed", (serverPayload: string) => {
+  socket.on("game-status-changed", async (serverPayload: string) => {
     const payload = JSON.parse(serverPayload)
 
     dispatch(setLobbyState(payload))
@@ -120,6 +120,8 @@ export default function WebSocket({ children }: WebSocketProps) {
         break
       case "game-over":
         console.log("Somebody won the entire game. Game over.")
+        await new Promise((resolve) => setTimeout(resolve, 5000))
+        router.push(`/lobbies/${payload._id}`)
         break
     }
   })

@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux"
 import { AnimatePresence, motion } from "framer-motion"
 import { ActionButton, FadeIn } from "styles/Components"
 import {
-  getNumberOfPlayers,
   getPlayerList,
   getGameStatus,
   Move,
@@ -19,7 +18,6 @@ const PlayerRing: FunctionComponent = () => {
   const dispatch = useDispatch()
   const playerName = useSelector(getName)
   const playerList = useSelector(getPlayerList)
-  const numberOfPlayers = useSelector(getNumberOfPlayers)
   const gameStatus = useSelector(getGameStatus)
 
   const ws = useContext(WebSocketContext)
@@ -69,55 +67,61 @@ const PlayerRing: FunctionComponent = () => {
 
   const isSelectingMove =
     gameStatus == "waiting-for-turns" &&
-    playerList?.find((p) => p.name == playerName)?.turn == null
+    playerList.find((p) => p.name == playerName)?.turn == null
 
   const isSelectingTarget =
     gameStatus == "waiting-for-turns" &&
-    playerList?.find((p) => p.name == playerName)?.turn?.target == null
+    playerList.find((p) => p.name == playerName)?.turn?.target == null
 
   const chosenMoveAndTarget =
     gameStatus == "waiting-for-turns" &&
-    playerList?.find((p) => p.name == playerName)?.turn?.move != null &&
-    playerList?.find((p) => p.name == playerName)?.turn?.target != null
+    playerList.find((p) => p.name == playerName)?.turn?.move != null &&
+    playerList.find((p) => p.name == playerName)?.turn?.target != null
 
   // const playerShield = playerList?.find((p) => p.name == playerName)?.shield
   // const canShield = playerShield != null && playerShield > 0
   const canShield = true
 
-  const gameWinner = playerList?.find((p) => p.health > 0)
+  const gameWinner = playerList.find((p) => p.health > 0)
+
+  const health = playerList.find((p) => p.name === playerName)?.health ?? 0
+
+  const numAlive = playerList.filter((p) => p.health > 0).length
 
   return (
     <Container>
-      <Ring className={getRingType(numberOfPlayers)}>
-        {playerList.map((player) => (
-          <Player
-            key={player.name}
-            layout
-            selectable={isSelectingTarget}
-            isYourPlayer={player.name === playerName}
-            onClick={() => {
-              if (isSelectingTarget) {
-                onSelectTarget(player.name)
-              }
-            }}
-          >
-            <PlayerName>{player.name}</PlayerName>
-            <PlayerStats>
-              {/* <Shield>{player.shield}</Shield> */}
-              {/* <Divider>|</Divider> */}
-              <Health>{player.health}</Health>
-            </PlayerStats>
-            {/* <TurnStatusMessage>-10</TurnStatusMessage> */}
-            {player?.turn?.move && (
-              <PlayerMove color={getMoveDisplayColor(player.turn.move)}>
-                {getMoveDisplayText(player.turn)}
-              </PlayerMove>
-            )}
-          </Player>
-        ))}
+      <Ring className={getRingType(numAlive)}>
+        {playerList
+          .filter((player) => player.health > 0)
+          .map((player) => (
+            <Player
+              key={player.name}
+              layout
+              selectable={isSelectingTarget}
+              isYourPlayer={player.name === playerName}
+              onClick={() => {
+                if (isSelectingTarget) {
+                  onSelectTarget(player.name)
+                }
+              }}
+            >
+              <PlayerName>{player.name}</PlayerName>
+              <PlayerStats>
+                {/* <Shield>{player.shield}</Shield> */}
+                {/* <Divider>|</Divider> */}
+                <Health>{player.health}</Health>
+              </PlayerStats>
+              {/* <TurnStatusMessage>-10</TurnStatusMessage> */}
+              {player?.turn?.move && (
+                <PlayerMove color={getMoveDisplayColor(player.turn.move)}>
+                  {getMoveDisplayText(player.turn)}
+                </PlayerMove>
+              )}
+            </Player>
+          ))}
       </Ring>
       <AnimatePresence>
-        {isSelectingMove && (
+        {health > 0 && isSelectingMove && (
           <Actions
             variants={FadeIn}
             initial="hidden"

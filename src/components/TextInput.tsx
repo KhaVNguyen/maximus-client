@@ -7,6 +7,7 @@ interface TextInputProps {
   type: string
   placeholder: string
   value: string
+  capitalize?: boolean
   onChange: (ev: React.ChangeEvent<HTMLInputElement>) => void
 }
 
