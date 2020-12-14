@@ -120,7 +120,9 @@ export default function WebSocket({ children }: WebSocketProps) {
         break
       case "game-over":
         console.log("Somebody won the entire game. Game over.")
-        await new Promise((resolve) => setTimeout(resolve, 5000))
+        dispatch(setLobbyState(payload))
+        break
+      case "waiting-in-lobby":
         router.push(`/lobbies/${payload._id}`)
         dispatch(setLobbyState(payload))
         break
