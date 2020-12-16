@@ -132,7 +132,7 @@ export const ActionButton = styled.button<{
   }
 `
 
-export const TextInputField = styled.input`
+export const TextInputField = styled.input<{ capitalize: boolean }>`
   height: 48px;
   border-radius: 4px;
   padding: 18px;
@@ -140,6 +140,10 @@ export const TextInputField = styled.input`
   font-size: 16px;
   color: white;
   background: rgba(255, 255, 255, 0.15);
+  text-transform: ${(props) => (props.capitalize ? "uppercase" : "none")};
+  &::placeholder {
+    text-transform: none;
+  }
   &:hover,
   &:active {
     background: rgba(255, 255, 255, 0.2);

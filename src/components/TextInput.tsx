@@ -8,6 +8,7 @@ interface TextInputProps {
   placeholder: string
   value: string
   capitalize?: boolean
+  maxLength?: number
   onChange: (ev: React.ChangeEvent<HTMLInputElement>) => void
 }
 
@@ -15,7 +16,11 @@ const TextInput: React.FC<TextInputProps> = (props) => {
   return (
     <Container layout>
       <Label>{props.label}</Label>
-      <TextInputField {...props} />
+      <TextInputField
+        {...props}
+        capitalize={props.capitalize ?? false}
+        maxLength={props.maxLength}
+      />
     </Container>
   )
 }

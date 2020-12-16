@@ -220,7 +220,11 @@ const PlayerRing: FunctionComponent = () => {
             exit="exit"
           >
             <GameOverPrompt>Game Over</GameOverPrompt>
-            <Prompt>{gameWinner?.name} Won</Prompt>
+            <Prompt>
+              {gameWinner
+                ? `${gameWinner.name} won`
+                : "Nobody wins in war. Everyone died."}
+            </Prompt>
           </PromptContainer>
         )}
       </AnimatePresence>

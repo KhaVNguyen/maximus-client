@@ -48,6 +48,8 @@ const JoinLobby: FunctionComponent = () => {
         type="text"
         placeholder="Enter lobby code here (eg. XJSIFD)"
         value={lobbyCode}
+        capitalize={true}
+        maxLength={6}
         onChange={(ev: React.ChangeEvent<HTMLInputElement>): void =>
           setLobbyCode(ev.target.value)
         }
