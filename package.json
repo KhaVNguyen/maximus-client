@@ -14,7 +14,7 @@
     "@svgr/webpack": "^5.5.0",
     "@types/axios": "^0.14.0",
     "@types/socket.io-client": "^1.4.34",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "framer-motion": "^2.9.4",
     "next": "^9.4.2",
     "next-google-fonts": "^1.2.1",
